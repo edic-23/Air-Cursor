@@ -86,6 +86,30 @@ py -3.13 -m venv .venv
 
 ---
 
+## Troubleshooting
+
+**The cursor doesn't move / it can't see my hand**
+- **Wrong camera.** Air Cursor uses camera **index 0** by default. If you have more than
+  one camera (e.g. a laptop cam *and* a phone/USB cam), open **Settings** and change the
+  **Camera index** to `1`, `2`, … until it sees your hand.
+- **Camera blocked by Windows.** Go to **Settings → Privacy & security → Camera** and make
+  sure **"Let desktop apps access your camera"** is on.
+- **Camera in use.** Close other apps that might be holding the webcam (Zoom, Teams, OBS, etc.).
+- **Lighting / distance.** Use even lighting and keep your hand ~40–60 cm from the lens.
+
+**Clicks don't register (fist not detected)**
+- Open **Settings → Calibrate fist**, then open and close your hand a few times — it tunes
+  detection to your hand. Make a firm, full fist.
+
+**It scrolls when I don't want it to (or won't scroll)**
+- Adjust the pinch in **Settings**, or turn off **"Sideways pinch → scroll"** in the Gestures
+  section if you don't use it.
+
+**A gesture keeps firing by accident**
+- Every gesture has an on/off toggle in **Settings → Gestures**. Turn off any you don't want.
+
+---
+
 ## Accessibility
 
 Air Cursor can be used **without making a fist**. Turn on **Hover to click** in Settings:

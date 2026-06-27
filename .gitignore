@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# PyInstaller
+build/
+dist/
+*.manifest
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# App runtime config (user-specific)
+# (config lives in %APPDATA%\AirCursor, not the repo, but ignore stray copies)
+config.json
+
+# Internal note — keep local, don't publish
+docs/TODO_BEFORE_PUBLISH.md
+
+# Stray scratch/preview/test files (single leading underscore, e.g. _smoke.py).
+# The leading "/_" + "[!_]" ensures dunder files like __init__.py are NOT ignored.
+/_[!_]*.py
+/_[!_]*.png

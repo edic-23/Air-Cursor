@@ -75,8 +75,8 @@ class Settings:
 
     # --- scroll (pinch + move vertically) ---
     scroll_enabled: bool = True
-    pinch_on: float = 0.35           # pinch distance below this -> pinching
-    pinch_off: float = 0.55          # release above this
+    pinch_on: float = 0.45           # lateral-pinch distance below this -> scrolling
+    pinch_off: float = 0.65          # release above this
     scroll_speed: float = 15.0       # wheel notches per full screen-height of hand travel
 
     # --- cursor appearance ---

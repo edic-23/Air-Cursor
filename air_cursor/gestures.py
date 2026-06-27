@@ -57,6 +57,33 @@ def pinch_distance(lm) -> float:
     return _dist(lm[THUMB_TIP], lm[INDEX_TIP]) / hand_scale(lm)
 
 
+def is_lateral_pinch(lm, max_dist: float) -> bool:
+    """A *sideways* pinch used for scrolling, designed NOT to trigger on a fist.
+
+    Requirements:
+      1. Thumb tip and index tip are close (pinch).            -> max_dist
+      2. The pinch points sideways: the thumb->index vector is more horizontal
+         than vertical (so it reads as a lateral, rotated pinch).
+      3. The hand is NOT a fist: at least one of middle/ring/pinky is still
+         extended. A fist curls every finger, so this excludes it cleanly.
+    """
+    if pinch_distance(lm) > max_dist:
+        return False
+
+    # Orientation: thumb tip -> index tip vector, mostly horizontal.
+    dx = abs(lm[THUMB_TIP][0] - lm[INDEX_TIP][0])
+    dy = abs(lm[THUMB_TIP][1] - lm[INDEX_TIP][1])
+    if dx < dy:                       # more vertical than horizontal -> not lateral
+        return False
+
+    # Fist guard: a fist has all of middle/ring/pinky curled.
+    _idx, mid, ring, pinky = extended_fingers(lm)
+    if not (mid or ring or pinky):
+        return False
+
+    return True
+
+
 def palm_center(lm) -> tuple[float, float]:
     xs = sum(lm[i][0] for i in PALM_REF_IDS) / len(PALM_REF_IDS)
     ys = sum(lm[i][1] for i in PALM_REF_IDS) / len(PALM_REF_IDS)

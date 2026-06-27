@@ -193,7 +193,7 @@ class SettingsWindow(QWidget):
         self._rightclick = QCheckBox("Peace sign ✌ → right-click")
         self._rightclick.setChecked(settings.rightclick_enabled)
         self._rightclick.stateChanged.connect(self._changed)
-        self._scroll = QCheckBox("Pinch + move up/down → scroll")
+        self._scroll = QCheckBox("Sideways pinch + move up/down → scroll")
         self._scroll.setChecked(settings.scroll_enabled)
         self._scroll.stateChanged.connect(self._changed)
         self._dwell = QCheckBox("Hover to click (no fist needed — accessibility)")

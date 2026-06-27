@@ -30,7 +30,7 @@ in the air. Everything runs **locally** on your machine.
 | ✋ Move your open hand | Move the cursor |
 | ✊ Make a fist | Press & hold the left mouse button (click + **drag**) |
 | ✌️ Peace sign | **Right-click** |
-| 🤏 Pinch & move up/down | **Scroll** the page |
+| 🤏 Sideways pinch & move up/down | **Scroll** the page |
 | 👉 Flick sideways (fast) | Switch windows — **Alt + Tab** |
 | ⬆️ Sweep from very bottom to very top | Open Task View — **Win + Tab** |
 | 🕐 Hover & hold (optional) | Click without a fist — for accessibility |

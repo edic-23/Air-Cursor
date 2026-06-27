@@ -23,7 +23,7 @@ in the air. Everything runs **locally** on your machine.
 
 ---
 
-## ✨ What it does
+## What it does
 
 | Gesture | Action |
 |--------|--------|
@@ -36,23 +36,23 @@ in the air. Everything runs **locally** on your machine.
 | 🕐 Hover & hold (optional) | Click without a fist — for accessibility |
 
 Plus:
-- 🎨 **Glowing edge "mist"** so you always know it's active — pick any color
-- 🖐 **Cartoon hand cursor** that squashes & pops when you click (bring your own SVG/PNG)
-- 🎯 **Smart smoothing** (One Euro Filter) — precise when slow, snappy when fast
-- 🔒 **Click-anywhere** — works over *any* app, because it drives the real OS mouse
-- ⚙️ **Everything is tunable** in Settings, including one-click **fist calibration**
-- 🪶 **System tray** + global hotkeys, lives quietly in the background
+- **Glowing edge "mist"** so you always know it's active — pick any color
+- **Cartoon hand cursor** that squashes & pops when you click (bring your own SVG/PNG)
+- **Smart smoothing** (One Euro Filter) — precise when slow, snappy when fast
+- **Click-anywhere** — works over *any* app, because it drives the real OS mouse
+- **Everything is tunable** in Settings, including one-click **fist calibration**
+- **System tray** + global hotkeys, lives quietly in the background
 
 ---
 
-## 🚀 Get it
+## Get it
 
 ### Option A — Just run it (no coding) *(recommended)*
 1. Go to the [**Releases**](../../releases) page.
 2. Download **`AirCursor.exe`**.
 3. Double-click it. That's it — no Python, no install.
 
-> First launch opens **Settings**. Pick your camera, hit start, and hold your hand up. 🖐
+> First launch opens **Settings**. Pick your camera, hit start, and hold your hand up.
 
 ### Option B — Run from source (developers)
 ```bash
@@ -65,7 +65,7 @@ py -3.13 -m venv .venv
 
 ---
 
-## 🎮 Controls
+## Controls
 
 | Hotkey | Does |
 |--------|------|
@@ -75,7 +75,7 @@ py -3.13 -m venv .venv
 
 ---
 
-## ⚙️ First-time tips
+## First-time tips
 
 - **Point the camera at your hand**, well-lit, about 40–60 cm away. (A phone-as-webcam app like GlideX/DroidCam works great.)
 - Click **Settings → Calibrate fist** and open/close your hand a few times — it auto-tunes detection to *your* hand.
@@ -86,7 +86,7 @@ py -3.13 -m venv .venv
 
 ---
 
-## ♿ Accessibility
+## Accessibility
 
 Air Cursor can be used **without making a fist**. Turn on **Hover to click** in Settings:
 hold the cursor still over a target and it clicks automatically (a ring shows the
@@ -94,7 +94,7 @@ countdown). Useful for anyone who can't reliably grip or curl their hand.
 
 ---
 
-## 🎨 Custom cursor art
+## Custom cursor art
 
 The cursor is drawn from code by default, but you can drop in your own:
 - `assets/hand_open.svg` (or `.png`) — resting / open hand
@@ -106,7 +106,7 @@ The glow, wiggle and click-pop are applied automatically. CC0 art sources:
 
 ---
 
-## 🛠 How it works
+## How it works
 
 - **Hand tracking:** [MediaPipe Hand Landmarker](https://ai.google.dev/edge/mediapipe) (runs locally, on CPU)
 - **UI / overlay:** PyQt6 — a transparent, click-through, always-on-top window that only paints
@@ -116,11 +116,11 @@ The glow, wiggle and click-pop are applied automatically. CC0 art sources:
 The camera + AI run on a background thread and talk to the UI via Qt signals, so the
 cursor stays smooth and never blocks the interface.
 
-> 🔒 **Privacy:** all processing is on your machine. No video ever leaves your computer.
+> **Privacy:** all processing is on your machine. No video ever leaves your computer.
 
 ---
 
-## 📋 Requirements
+## Requirements
 
 - Windows 10 / 11
 - Any webcam (built-in, USB, or a phone-as-webcam app)
@@ -128,10 +128,10 @@ cursor stays smooth and never blocks the interface.
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Issues and PRs welcome — gesture ideas, cursor art, and platform ports especially.
 
-## 📄 License
+## License
 
 MIT — see [LICENSE](LICENSE). Bundled hand model is from Google MediaPipe (Apache-2.0).

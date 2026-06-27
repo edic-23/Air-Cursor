@@ -20,8 +20,9 @@ Thumbs.db
 # (config lives in %APPDATA%\AirCursor, not the repo, but ignore stray copies)
 config.json
 
-# Internal note — keep local, don't publish
+# Internal notes — keep local, never publish
 docs/TODO_BEFORE_PUBLISH.md
+CLAUDE.md
 
 # Stray scratch/preview/test files (single leading underscore, e.g. _smoke.py).
 # The leading "/_" + "[!_]" ensures dunder files like __init__.py are NOT ignored.

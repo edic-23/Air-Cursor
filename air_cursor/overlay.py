@@ -54,7 +54,7 @@ class OverlayWindow(QWidget):
         self._burst = 0.0           # expanding ring on click, 1 -> 0
         self._swipe_flash = 0.0     # horizontal swipe feedback pulse, 1 -> 0
         self._swipe_dir = 1         # direction of last swipe
-        self._swipe_up_flash = 0.0  # vertical (Win+Tab) feedback pulse, 1 -> 0
+        self._swipe_down_flash = 0.0  # vertical (Win+L) feedback pulse, 1 -> 0
         self._dwell = 0.0           # dwell-to-click ring progress, 0..1
 
         # Optional custom cursors: SVG (preferred, crisp) > PNG > built-in vector art.
@@ -127,8 +127,8 @@ class OverlayWindow(QWidget):
         self._swipe_dir = direction
         self._swipe_flash = 1.0
 
-    def flash_swipe_up(self):
-        self._swipe_up_flash = 1.0
+    def flash_swipe_down(self):
+        self._swipe_down_flash = 1.0
 
     @pyqtSlot(float)
     def on_dwell_progress(self, progress: float):
@@ -159,9 +159,9 @@ class OverlayWindow(QWidget):
         self._swipe_flash *= 0.90
         if self._swipe_flash < 0.01:
             self._swipe_flash = 0.0
-        self._swipe_up_flash *= 0.90
-        if self._swipe_up_flash < 0.01:
-            self._swipe_up_flash = 0.0
+        self._swipe_down_flash *= 0.90
+        if self._swipe_down_flash < 0.01:
+            self._swipe_down_flash = 0.0
         self.update()
 
     # --- painting ---
@@ -175,8 +175,8 @@ class OverlayWindow(QWidget):
             self._paint_mist(p)
         if self._swipe_flash > 0:
             self._paint_swipe(p)
-        if self._swipe_up_flash > 0:
-            self._paint_swipe_up(p)
+        if self._swipe_down_flash > 0:
+            self._paint_swipe_down(p)
         if self._has_hand:
             self._paint_hand(p, self._cursor, self._fist_anim)
         if self._has_hand and self._dwell > 0:
@@ -219,24 +219,24 @@ class OverlayWindow(QWidget):
             path.lineTo(cx - d * size * 0.5, cy + size)
             p.drawPath(path)
 
-    def _paint_swipe_up(self, p: QPainter):
-        """Upward chevrons rising up the screen for the Win+Tab sweep."""
-        f = self._swipe_up_flash
+    def _paint_swipe_down(self, p: QPainter):
+        """Downward chevrons dropping down the screen for the Win+L (lock) sweep."""
+        f = self._swipe_down_flash
         w, h = self.width(), self.height()
         cx = w / 2
         accent = QColor(self._settings.mist_color)
         accent.setAlpha(int(200 * f))
         p.setPen(QPen(accent, 18, Qt.PenStyle.SolidLine,
                       Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin))
-        rise = (1.0 - f) * 120
-        base_y = h / 2 - (160 + rise)
+        drop = (1.0 - f) * 120
+        base_y = h / 2 + (160 + drop)
         for i in range(3):
-            cy = base_y - i * 70
+            cy = base_y + i * 70
             size = 55
             path = QPainterPath()
-            path.moveTo(cx - size, cy + size * 0.5)
-            path.lineTo(cx, cy - size * 0.5)
-            path.lineTo(cx + size, cy + size * 0.5)
+            path.moveTo(cx - size, cy - size * 0.5)
+            path.lineTo(cx, cy + size * 0.5)
+            path.lineTo(cx + size, cy - size * 0.5)
             p.drawPath(path)
 
     def _paint_mist(self, p: QPainter):

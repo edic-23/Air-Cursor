@@ -82,17 +82,17 @@ class MouseController:
             win32api.keybd_event(VK_SHIFT, 0, KEYUP, 0)
         win32api.keybd_event(VK_MENU, 0, KEYUP, 0)
 
-    def win_tab(self) -> None:
-        """Press Win+Tab once to open Task View."""
+    def win_l(self) -> None:
+        """Press Win+L once to lock the workstation."""
         import time
 
         VK_LWIN = 0x5B
-        VK_TAB = 0x09
+        VK_L = 0x4C
         KEYUP = win32con.KEYEVENTF_KEYUP
 
         win32api.keybd_event(VK_LWIN, 0, 0, 0)
-        win32api.keybd_event(VK_TAB, 0, 0, 0)
-        win32api.keybd_event(VK_TAB, 0, KEYUP, 0)
+        win32api.keybd_event(VK_L, 0, 0, 0)
+        win32api.keybd_event(VK_L, 0, KEYUP, 0)
         time.sleep(0.04)
         win32api.keybd_event(VK_LWIN, 0, KEYUP, 0)
 

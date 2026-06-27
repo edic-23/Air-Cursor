@@ -31,8 +31,8 @@ in the air. Everything runs **locally** on your machine.
 | ✊ Make a fist | Press & hold the left mouse button (click + **drag**) |
 | ✌️ Peace sign | **Right-click** |
 | 🤏 Sideways pinch & move up/down | **Scroll** the page |
-| 👉 Flick sideways (fast) | Switch windows — **Alt + Tab** |
-| ⬆️ Sweep from very bottom to very top | Open Task View — **Win + Tab** |
+| 👉 Sweep edge-to-edge sideways | Switch windows — **Alt + Tab** |
+| 🔒 Sweep top edge to bottom edge | Lock the screen — **Win + L** |
 | 🕐 Hover & hold (optional) | Click without a fist — for accessibility |
 
 Plus:

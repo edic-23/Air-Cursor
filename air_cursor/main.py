@@ -69,7 +69,7 @@ class AirCursorApp(QObject):
         self.tracker.gestureChanged.connect(self.on_gesture)
         self.tracker.handPresence.connect(self.overlay.on_presence)
         self.tracker.swipe.connect(self.on_swipe)
-        self.tracker.swipeUp.connect(self.on_swipe_up)
+        self.tracker.swipeDown.connect(self.on_swipe_down)
         self.tracker.dwellClick.connect(self.on_dwell_click)
         self.tracker.dwellProgress.connect(self.overlay.on_dwell_progress)
         self.tracker.rightClick.connect(self.on_right_click)
@@ -111,15 +111,15 @@ class AirCursorApp(QObject):
 
     @pyqtSlot(int)
     def on_swipe(self, direction: int):
-        # Fast horizontal flick -> Windows app switch (Alt+Tab / Alt+Shift+Tab).
+        # Margin-to-margin horizontal sweep -> app switch (Alt+Tab / Alt+Shift+Tab).
         self.mouse.alt_tab(forward=direction > 0)
         self.overlay.flash_swipe(direction)
 
     @pyqtSlot()
-    def on_swipe_up(self):
-        # Full bottom-to-top sweep -> Win+Tab (Task View).
-        self.mouse.win_tab()
-        self.overlay.flash_swipe_up()
+    def on_swipe_down(self):
+        # Full top-to-bottom sweep -> Win+L (lock screen).
+        self.mouse.win_l()
+        self.overlay.flash_swipe_down()
 
     @pyqtSlot()
     def on_dwell_click(self):

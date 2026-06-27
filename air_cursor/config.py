@@ -41,16 +41,17 @@ class Settings:
     zone_w: float = 0.46
     zone_h: float = 0.52
 
-    # --- swipe-to-alt-tab ---
+    # --- horizontal margin-to-margin sweep -> Alt+Tab ---
     swipe_enabled: bool = True
-    swipe_speed: float = 2.2         # screen-widths/sec to count as a flick
-    swipe_cooldown_s: float = 0.7    # min seconds between swipe fires
+    swipe_edge: float = 0.06         # edge band: start <=6% and reach >=94% (or vice-versa)
+    swipe_max_time: float = 0.9      # whole sweep must complete within this many sec
+    swipe_cooldown_s: float = 0.7    # min seconds between any swipe fires
 
-    # --- full bottom->top sweep for Win+Tab (Task View) ---
-    swipe_up_enabled: bool = True
-    swipe_up_bottom: float = 0.95    # must START at >= 95% down (very bottom)
-    swipe_up_top: float = 0.05       # must REACH <= 5% (very top)
-    swipe_up_max_time: float = 0.8   # whole sweep must complete within this many sec
+    # --- full top->bottom sweep -> Win+L (lock screen) ---
+    swipe_down_enabled: bool = True
+    swipe_down_top: float = 0.05     # must START at <= 5% (very top)
+    swipe_down_bottom: float = 0.95  # must REACH >= 95% (very bottom)
+    swipe_down_max_time: float = 0.8 # whole sweep must complete within this many sec
 
     # --- axis mirroring (depends on camera mount/flip) ---
     mirror_x: bool = False           # flip if left/right is reversed

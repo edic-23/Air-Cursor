@@ -66,8 +66,8 @@ class TrackerThread(QThread):
     gestureChanged = pyqtSignal(bool)
     fpsUpdated = pyqtSignal(float)
     handPresence = pyqtSignal(bool)
-    swipe = pyqtSignal(int)         # +1 = swipe right, -1 = swipe left
-    swipeUp = pyqtSignal()          # full bottom->top sweep (Win+Tab / Task View)
+    swipe = pyqtSignal(int)         # margin-to-margin horizontal sweep: +1 right, -1 left
+    swipeDown = pyqtSignal()        # full top->bottom sweep -> Win+L (lock)
     dwellProgress = pyqtSignal(float)  # 0..1 ring fill while hovering to click
     dwellClick = pyqtSignal()       # dwell completed -> perform a click
     curlSample = pyqtSignal(float)  # raw curl ratio each frame (for calibration)
@@ -87,13 +87,13 @@ class TrackerThread(QThread):
         self._frozen_pos: tuple[int, int] | None = None
         self._freeze_start = 0.0
         self._prev_fist = False
-        # Swipe detection: track recent x positions for velocity.
-        self._last_x: float | None = None
-        self._last_x_t = 0.0
+        # Horizontal margin-to-margin sweep (Alt+Tab): which edge it armed at.
+        self._h_armed_side = 0          # -1 left, +1 right, 0 not armed
+        self._h_armed_t = 0.0
         self._swipe_cooldown = 0.0
-        # Vertical full-sweep (bottom -> top) for Win+Tab.
-        self._bottom_armed_t: float | None = None
-        self._swipe_up_cooldown = 0.0
+        # Vertical full-sweep (top -> bottom) for Win+L.
+        self._top_armed_t: float | None = None
+        self._swipe_down_cooldown = 0.0
         # Dwell-to-click: anchor position + when we started holding still.
         self._dwell_anchor: tuple[int, int] | None = None
         self._dwell_start = 0.0
@@ -116,56 +116,70 @@ class TrackerThread(QThread):
         self._screen = screen_rect
 
     def _detect_swipe(self, px: float, t: float) -> None:
-        """Fire a swipe when the cursor crosses the screen fast horizontally.
+        """Fire Alt+Tab on a full margin-to-margin horizontal sweep.
 
-        Uses screen-space x velocity. A quick flick (faster than normal pointing)
-        triggers alt-tab; a cooldown prevents repeat fires from one motion.
+        The hand must START at one horizontal edge (<= edge or >= 1-edge of screen
+        width) and REACH the opposite edge within max_time. Direction is set by which
+        edge it started from. A mid-screen flick does nothing.
         """
         s = self._settings
         if not s.swipe_enabled:
             return
-        if self._last_x is None:
-            self._last_x = px
-            self._last_x_t = t
-            return
-        dt = t - self._last_x_t
-        if dt <= 0:
-            return
         screen_w = max(1, self._screen[2])
-        vx = (px - self._last_x) / dt / screen_w   # fraction of screen width / sec
-        self._last_x = px
-        self._last_x_t = t
+        frac = (px - self._screen[0]) / screen_w     # 0 (left) .. 1 (right)
+        edge = s.swipe_edge
+        at_left = frac <= edge
+        at_right = frac >= 1.0 - edge
 
-        if t < self._swipe_cooldown:
+        # 1) If already armed, check whether we reached the OPPOSITE edge -> fire.
+        if self._h_armed_side == -1 and at_right:
+            self._complete_swipe(t)
             return
-        if abs(vx) >= s.swipe_speed:
-            self.swipe.emit(1 if vx > 0 else -1)
+        if self._h_armed_side == +1 and at_left:
+            self._complete_swipe(t)
+            return
+
+        # 2) Otherwise arm at whichever edge the hand is currently on.
+        if at_left:
+            self._h_armed_side = -1
+            self._h_armed_t = t
+        elif at_right:
+            self._h_armed_side = +1
+            self._h_armed_t = t
+        elif self._h_armed_side != 0 and (t - self._h_armed_t) > s.swipe_max_time:
+            self._h_armed_side = 0                    # took too long, disarm
+
+    def _complete_swipe(self, t: float) -> None:
+        s = self._settings
+        within = (t - self._h_armed_t) <= s.swipe_max_time
+        if within and t >= self._swipe_cooldown:
+            # left->right starts on the left (armed -1), so direction = -armed_side = +1.
+            self.swipe.emit(-self._h_armed_side)
             self._swipe_cooldown = t + s.swipe_cooldown_s
+        self._h_armed_side = 0
 
-    def _detect_swipe_up(self, py: float, t: float) -> None:
-        """Fire Win+Tab on a full sweep from the very bottom to the very top.
+    def _detect_swipe_down(self, py: float, t: float) -> None:
+        """Fire Win+L (lock) on a full sweep from the very top to the very bottom.
 
-        Requires the cursor to start in the bottom band (>= bottom_thresh of the
-        screen, e.g. 95-100%) and reach the top band (<= top_thresh, e.g. 0-5%)
-        within max_time seconds. A partial sweep does nothing.
+        Must START at the top band (<= top) and REACH the bottom band (>= bottom)
+        within max_time. A partial sweep does nothing.
         """
         s = self._settings
-        if not s.swipe_up_enabled:
+        if not s.swipe_down_enabled:
             return
         screen_h = max(1, self._screen[3])
-        # py is absolute pixels; convert to fraction 0 (top) .. 1 (bottom).
-        frac = (py - self._screen[1]) / screen_h
+        frac = (py - self._screen[1]) / screen_h     # 0 (top) .. 1 (bottom)
 
-        if frac >= s.swipe_up_bottom:          # hand in the bottom band -> arm
-            self._bottom_armed_t = t
-        elif self._bottom_armed_t is not None:
-            within = (t - self._bottom_armed_t) <= s.swipe_up_max_time
-            if frac <= s.swipe_up_top and within and t >= self._swipe_up_cooldown:
-                self.swipeUp.emit()
-                self._swipe_up_cooldown = t + s.swipe_cooldown_s
-                self._bottom_armed_t = None
+        if frac <= s.swipe_down_top:                 # armed at the very top
+            self._top_armed_t = t
+        elif self._top_armed_t is not None:
+            within = (t - self._top_armed_t) <= s.swipe_down_max_time
+            if frac >= s.swipe_down_bottom and within and t >= self._swipe_down_cooldown:
+                self.swipeDown.emit()
+                self._swipe_down_cooldown = t + s.swipe_cooldown_s
+                self._top_armed_t = None
             elif not within:
-                self._bottom_armed_t = None     # took too long, disarm
+                self._top_armed_t = None             # took too long, disarm
 
     def _detect_dwell(self, px: int, py: int, t: float) -> None:
         """Click when the cursor is held still within a small radius for dwell_time.
@@ -206,8 +220,8 @@ class TrackerThread(QThread):
 
     def _reset_open_hand_gestures(self) -> None:
         """Clear swipe/dwell state so secondary poses don't leave them armed."""
-        self._last_x = None
-        self._bottom_armed_t = None
+        self._h_armed_side = 0
+        self._top_armed_t = None
         self._dwell_anchor = None
 
     def _suppress_fist(self) -> None:
@@ -389,7 +403,7 @@ class TrackerThread(QThread):
                         # Swipe + dwell: only when the hand is open (not mid-click).
                         if not fist:
                             self._detect_swipe(px, loop_start)
-                            self._detect_swipe_up(py, loop_start)
+                            self._detect_swipe_down(py, loop_start)
                             self._detect_dwell(out_x, out_y, loop_start)
                         else:
                             self._reset_open_hand_gestures()

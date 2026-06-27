@@ -58,30 +58,14 @@ def pinch_distance(lm) -> float:
 
 
 def is_lateral_pinch(lm, max_dist: float) -> bool:
-    """A *sideways* pinch used for scrolling, designed NOT to trigger on a fist.
+    """A pinch (thumb tip near index tip) used for scrolling.
 
-    Requirements:
-      1. Thumb tip and index tip are close (pinch).            -> max_dist
-      2. The pinch points sideways: the thumb->index vector is more horizontal
-         than vertical (so it reads as a lateral, rotated pinch).
-      3. The hand is NOT a fist: at least one of middle/ring/pinky is still
-         extended. A fist curls every finger, so this excludes it cleanly.
+    The thumb-index distance is the reliable signal: a real pinch is much smaller
+    than a fist, so `max_dist` (set between the two from live calibration) cleanly
+    separates them. We do NOT use the finger-extension guard — it proved unreliable
+    on real webcam data; the distance threshold alone does the separation.
     """
-    if pinch_distance(lm) > max_dist:
-        return False
-
-    # Orientation: thumb tip -> index tip vector, mostly horizontal.
-    dx = abs(lm[THUMB_TIP][0] - lm[INDEX_TIP][0])
-    dy = abs(lm[THUMB_TIP][1] - lm[INDEX_TIP][1])
-    if dx < dy:                       # more vertical than horizontal -> not lateral
-        return False
-
-    # Fist guard: a fist has all of middle/ring/pinky curled.
-    _idx, mid, ring, pinky = extended_fingers(lm)
-    if not (mid or ring or pinky):
-        return False
-
-    return True
+    return pinch_distance(lm) <= max_dist
 
 
 def palm_center(lm) -> tuple[float, float]:

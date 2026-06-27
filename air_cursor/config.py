@@ -67,8 +67,8 @@ class Settings:
     dwell_radius: int = 35           # px of allowed wobble while dwelling
 
     # --- gesture thresholds (curl ratio; fist = more curled) ---
-    fist_on: float = 0.38            # cross above -> fist (press)
-    fist_off: float = 0.25           # drop below -> open (release)
+    fist_on: float = 0.18            # cross above -> fist (press)
+    fist_off: float = 0.10           # drop below -> open (release)
     gesture_debounce: int = 2        # consecutive frames required to switch state
 
     # --- right-click (peace sign ✌) ---
@@ -76,8 +76,8 @@ class Settings:
 
     # --- scroll (pinch + move vertically) ---
     scroll_enabled: bool = True
-    pinch_on: float = 0.45           # lateral-pinch distance below this -> scrolling
-    pinch_off: float = 0.65          # release above this
+    pinch_on: float = 0.22           # lateral-pinch distance below this -> scrolling
+    pinch_off: float = 0.32          # release above this (stays below a fist ~0.35)
     scroll_speed: float = 15.0       # wheel notches per full screen-height of hand travel
 
     # --- cursor appearance ---

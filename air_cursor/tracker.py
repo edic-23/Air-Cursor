@@ -25,8 +25,6 @@ from .config import Settings
 from .gestures import (
     FistDetector,
     curl_ratio,
-    extended_fingers,
-    is_lateral_pinch,
     is_peace,
     palm_center,
     pinch_distance,
@@ -232,21 +230,18 @@ class TrackerThread(QThread):
         self._frozen_pos = None
 
     def _update_pinch(self, lm) -> bool:
-        """Lateral-pinch detector for scroll, with hysteresis.
+        """Pinch detector for scroll, by thumb-index distance, with hysteresis.
 
-        Engages only on a clear sideways pinch that is NOT a fist (so a closed fist
-        can never be mistaken for scroll). Once engaged, it stays active while the
-        pinch is held and the hand isn't a fist, so a little orientation drift mid-
-        scroll won't drop it.
+        `pinch_on` is calibrated to sit between a real pinch (~0.16) and a fist
+        (~0.35), so a closed fist never counts as scroll. `pinch_off` (still below a
+        fist) keeps it engaged through small wobble while scrolling.
         """
         s = self._settings
+        d = pinch_distance(lm)
         if self._pinching:
-            d = pinch_distance(lm)
-            _idx, mid, ring, pinky = extended_fingers(lm)
-            not_fist = mid or ring or pinky
-            self._pinching = d < s.pinch_off and not_fist
+            self._pinching = d < s.pinch_off
         else:
-            self._pinching = is_lateral_pinch(lm, s.pinch_on)
+            self._pinching = d < s.pinch_on
         return self._pinching
 
     def _do_scroll(self, py: float) -> None:
